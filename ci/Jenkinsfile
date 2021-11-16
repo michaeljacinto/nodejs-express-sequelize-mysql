@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages {
+        stage('Authenticate') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'AzureTenantID', variable: 'TENANT_ID'),
+                    usernamePassword(credentialsId: 'ACRCredentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD'),
+                    usernamePassword(credentialsId: 'AzServicePrincipal', usernameVariable: 'APP_ID', passwordVariable: 'APP_SECRET')
+                ]) {
+                sh "az login --service-principal -u $APP_ID -p $APP_SECERT --tenant $TENANT_ID"
+                }
+            }
+        }
+    }
+}
