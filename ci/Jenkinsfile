@@ -14,7 +14,10 @@ pipeline {
         }
         stage('Package') {
             steps {
-                    sh "az acr login --name mj3495"
+                    withCredentials([
+                        string(credentialsId: 'ACRToken', variable: 'ACR_TOKEN')
+                ])
+                    sh "docker login mj3495.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin $ACR_TOKEN"
                     sh "docker pull mcr.microsoft.com/oss/nginx/nginx:1.15.5-alpine"
                     sh "docker tag mcr.microsoft.com/oss/nginx/nginx:1.15.5-alpine mj3495.azurecr.io/samples/nginx"
                     sh "docker push mj3495.azurecr.io/samples/nginx"
