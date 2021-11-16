@@ -3,13 +3,21 @@ pipeline {
     stages {
         stage('Authenticate') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'AzureTenantID', variable: 'TENANT_ID'),
-                    usernamePassword(credentialsId: 'ACRCredentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD'),
-                    usernamePassword(credentialsId: 'AzServicePrincipal', usernameVariable: 'APP_ID', passwordVariable: 'APP_SECRET')
+                    withCredentials([
+                        string(credentialsId: 'AzureTenantID', variable: 'TENANT_ID'),
+                        usernamePassword(credentialsId: 'ACRCredentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD'),
+                        usernamePassword(credentialsId: 'AzServicePrincipal', usernameVariable: 'APP_ID', passwordVariable: 'APP_SECRET')
                 ]) {
-                sh "az login --service-principal -u $APP_ID -p $APP_SECERT --tenant $TENANT_ID"
+                    sh "az login --service-principal -u $APP_ID -p $APP_SECRET --tenant $TENANT_ID"
                 }
+            }
+        }
+        stage('Package') {
+            steps {
+                    sh "az acr login --name mj3495"
+                    sh "docker pull mcr.microsoft.com/oss/nginx/nginx:1.15.5-alpine"
+                    sh "docker tag mcr.microsoft.com/oss/nginx/nginx:1.15.5-alpine mj3495.azurecr.io/samples/nginx"
+                    sh "docker push mj3495.azurecr.io/samples/nginx"
             }
         }
     }
