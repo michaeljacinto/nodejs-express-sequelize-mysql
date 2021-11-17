@@ -2,10 +2,14 @@ pipeline {
     agent any
     stages {
         stage('Build') {
-            sh "echo 'Build success'"
+            steps {
+                sh "echo 'Build success'"
+            }
         }
         stage('Test') {
-            sh "echo 'Test success'"
+            steps {
+                sh "echo 'Test success'"
+            }
         }
         stage('Authenticate') {
             steps {
